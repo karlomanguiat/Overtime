@@ -11,7 +11,7 @@ import SwiftUI
 struct OvertimeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            OvertimeListView()
         }
     }
 }
