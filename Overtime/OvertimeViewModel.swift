@@ -37,20 +37,34 @@ class OvertimeViewModel: ObservableObject {
     }
     
     func removeEntry(_ entry: OvertimeEntry) {
-            entries.removeAll { $0.id == entry.id }
+        entries.removeAll { $0.id == entry.id }
+    }
+    
+    func deleteEntry(_ entries: [OvertimeEntry]) {
+        for entry in entries {
+            self.removeEntry(entry)
         }
+    }
     
     func monthlyGroupedEntries() -> [(month: String, entries: [OvertimeEntry])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         
+        // Group entries by "MMMM yyyy"
         let grouped = Dictionary(grouping: entries) { entry in
             formatter.string(from: entry.date)
         }
         
-        return grouped
-            .map { (month: $0.key, entries: $0.value.sorted { $0.date > $1.date }) }
-            .sorted { $0.month > $1.month }
+        // Sort months by actual chronological date
+        let sorted = grouped
+            .map { key, value -> (month: String, entries: [OvertimeEntry], sortDate: Date) in
+                let date = formatter.date(from: key) ?? .distantPast
+                return (month: key, entries: value.sorted { $0.date > $1.date }, sortDate: date)
+            }
+            .sorted { $0.sortDate > $1.sortDate }
+            .map { (month: $0.month, entries: $0.entries) }
+        
+        return sorted
     }
     
     func totalOvertime(for monthEntries: [OvertimeEntry]) -> Double {

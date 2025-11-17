@@ -61,3 +61,14 @@ struct OvertimeEntry: Identifiable, Codable {
         timeOut < timeIn
     }
 }
+
+
+struct MockOvertimeEntry {
+    static let mockEntry = OvertimeEntry(
+        id: UUID(),
+        date: Date(),
+        timeIn: Date(),
+        timeOut: Date(),
+        notes: "Sample notes"
+    )
+}
